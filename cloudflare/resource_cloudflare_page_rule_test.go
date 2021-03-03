@@ -1,6 +1,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"reflect"
@@ -597,7 +598,7 @@ func testAccCheckCloudflarePageRuleDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := client.PageRule(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		_, err := client.PageRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err == nil {
 			return fmt.Errorf("PageRule still exists")
 		}
@@ -701,7 +702,7 @@ func testAccCheckCloudflarePageRuleExists(n string, pageRule *cloudflare.PageRul
 		}
 
 		client := testAccProvider.Meta().(*cloudflare.API)
-		foundPageRule, err := client.PageRule(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		foundPageRule, err := client.PageRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
@@ -725,7 +726,7 @@ func testAccManuallyDeletePageRule(name string, initialID *string) resource.Test
 
 		client := testAccProvider.Meta().(*cloudflare.API)
 		*initialID = rs.Primary.ID
-		err := client.DeletePageRule(rs.Primary.Attributes["zone_id"], rs.Primary.ID)
+		err := client.DeletePageRule(context.Background(), rs.Primary.Attributes["zone_id"], rs.Primary.ID)
 		if err != nil {
 			return err
 		}
